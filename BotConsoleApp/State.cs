@@ -30,13 +30,24 @@ namespace BotConsoleApp
             return UserStates[chatId][command];
         }
 
+        public static void ResetAll(long chatId)
+        {
+            if (UserStates.ContainsKey(chatId))
+            {
+                UserStates.Remove(chatId);
+            }
+            if (UserCommands.ContainsKey(chatId))
+            {
+                UserCommands.Remove(chatId);
+            }
+        }
         public static async Task RequestReportValue(ITelegramBotClient botClient, long chatId, string command)
         {
             if (!UserCommands.ContainsKey(chatId))
             {
                 UserCommands[chatId] = command;
             }
-            await botClient.SendTextMessageAsync(chatId, "Please enter the number:");
+            await botClient.SendMessage(chatId, "Please enter the number:");
         }
 
         public static async Task<bool> TryToStoreReportValue(ITelegramBotClient botClient, long chatId, string messageText)
@@ -61,7 +72,7 @@ namespace BotConsoleApp
                         return true;
                     }
 
-                    await botClient.SendTextMessageAsync(chatId, $"Invalid command");
+                    await botClient.SendMessage(chatId, $"Invalid command");
                     return false;
                 }
 
@@ -70,6 +81,20 @@ namespace BotConsoleApp
             catch (Exception ex)
             {
                 return false;
+            }
+        }
+
+        public static void Reset(long chatId, string reportType)
+        {
+            if (UserStates.ContainsKey(chatId))
+            {
+                var currentState = UserStates[chatId];
+                foreach (var key in currentState.Keys) {
+                    if (key.Contains(reportType)) {
+                        currentState.Remove(key);
+                    }
+                }
+                UserStates[chatId] = currentState;
             }
         }
     }

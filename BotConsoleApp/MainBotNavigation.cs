@@ -92,6 +92,15 @@ namespace BotConsoleApp
                 case "createnewreport_cafee":
                     await botClient.SendMessage(chatId, "You selected 'Cafee' for your report.");
                     break;
+                case "reset_all":
+                    State.ResetAll(chatId);
+                    break;
+                case "submit_xerox_taken":
+                    await XeroxReport.SubmitXeroxTaken(botClient, chatId);
+                    break;
+                case "submit_xerox_leftover":
+                    await XeroxReport.SubmitXeroxLeftover(botClient, chatId);
+                    break;
                 default:
                     await botClient.SendMessage(chatId, $"Sorry, i'm not ready to process {callbackQuery.Data} yet.");
                     break;
